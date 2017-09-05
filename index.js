@@ -170,28 +170,27 @@ Ethash.prototype.verifyPOW = function (block, cb) {
 
   // don't validate genesis blocks
   if (block.header.isGenesis()) {
-    cb(true)
-    return
+    return true;
   }
 
   this._verifyPOW(block.header, function (valid2) {
     valid &= valid2
 
     if (!valid) {
-      return cb(valid)
+      return valid;
     }
 
     async.eachSeries(block.uncleHeaders, function (uheader, cb2) {
       self._verifyPOW(uheader, function (valid3) {
         valid &= valid3
         if (!valid) {
-          cb2(Boolean(valid))
+          return Boolean(valid);
         } else {
-          cb2()
+          return
         }
       })
     }, function () {
-      cb(Boolean(valid))
+      return Boolean(valid);
     })
   })
 }
